@@ -1,0 +1,715 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Учебная информационная система Аэрофлота: поиск рейсов и бронирование билетов.">
+  <title>Аэрофлот — главная</title>
+  <style>
+/* =========================================================
+   АЭРОФЛОТ — оформление учебной информационной системы
+   Макет повторяет композицию страниц из исходного документа.
+   ========================================================= */
+:root {
+  --navy: #102f63;
+  --navy-deep: #0c2854;
+  --navy-soft: #173e78;
+  --blue: #2168c8;
+  --blue-light: #e7f0ff;
+  --red: #d9252d;
+  --text: #1b2940;
+  --muted: #778397;
+  --line: #e2e8f1;
+  --page: #f1f4f9;
+  --white: #fff;
+  --shadow: 0 3px 12px rgba(20, 47, 86, .07);
+  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text);
+  background: var(--page);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; min-width: 320px; background: var(--page); font-size: 14px; }
+a { color: inherit; text-decoration: none; }
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+.hidden { display: none !important; }
+.muted { color: var(--muted); font-size: 12px; }
+
+/* Общий логотип и кнопки */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--navy);
+  line-height: 1.08;
+  white-space: nowrap;
+}
+.brand-mark {
+  display: inline-block;
+  color: var(--red);
+  font-size: 29px;
+  line-height: 1;
+  transform: rotate(-38deg);
+}
+.brand strong, .sidebar-brand strong { display: block; font-size: 15px; font-weight: 700; }
+.brand small, .sidebar-brand small {
+  display: block;
+  margin-top: 3px;
+  color: #7e8999;
+  font-size: 10px;
+  font-weight: 400;
+}
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0 17px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  transition: background .16s ease, border-color .16s ease, transform .16s ease, box-shadow .16s ease;
+}
+.button:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(12, 40, 84, .12); }
+.button-red { color: #fff; background: var(--red); }
+.button-red:hover { background: #bf1d26; }
+.button-blue { color: #fff; background: var(--blue); }
+.button-blue:hover { background: #1857a5; }
+.button-outline { color: var(--navy); background: #fff; border-color: #aab6c7; }
+.button-outline:hover { border-color: var(--blue); background: #f8fbff; }
+.button-small { min-height: 36px; padding: 0 16px; font-size: 11px; }
+.button-xs { min-height: 25px; padding: 0 11px; border-radius: 5px; font-size: 10px; }
+.button-wide { width: 100%; min-height: 44px; font-size: 13px; }
+
+/* =========================================================
+   1. ГЛАВНАЯ СТРАНИЦА
+   ========================================================= */
+.home-page { background: var(--page); }
+.topbar {
+  width: 100%;
+  max-width: 1120px;
+  height: 64px;
+  margin: 0 auto;
+  padding: 0 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  background: #fff;
+}
+.main-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+  margin: 0 auto;
+}
+.main-nav a { color: #202a3a; font-size: 12px; transition: color .15s ease; }
+.main-nav a:hover, .main-nav a.active { color: var(--blue); }
+.top-actions { display: flex; align-items: center; gap: 8px; }
+.home-content {
+  max-width: 1120px;
+  margin: 0 auto;
+  overflow: hidden;
+  background: var(--page);
+}
+.hero {
+  min-height: 355px;
+  padding: 54px 86px 60px;
+  color: #fff;
+  background: linear-gradient(112deg, #102f63 0%, #153f7d 48%, #1e5aa7 100%);
+}
+.hero-copy h1 {
+  margin: 0 0 10px;
+  font-size: 34px;
+  line-height: 1.08;
+  letter-spacing: -.55px;
+  font-weight: 700;
+}
+.hero-copy p { margin: 0 0 27px; color: #d6e2f2; font-size: 13px; line-height: 1.5; }
+.search-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr auto;
+  align-items: end;
+  gap: 11px;
+  padding: 16px;
+  color: var(--text);
+  background: #fff;
+  border: 1px solid rgba(255,255,255,.65);
+  border-radius: 10px;
+  box-shadow: 0 12px 26px rgba(5, 26, 61, .24);
+}
+.search-form label, .flight-editor label, .stack-form > label:not(.check-line) {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 7px;
+  color: #68758a;
+  font-size: 11px;
+  font-weight: 600;
+}
+.search-form input, .search-form select,
+.flight-editor input, .flight-editor select,
+.stack-form input:not([type=checkbox]) {
+  width: 100%;
+  min-width: 0;
+  height: 38px;
+  padding: 0 11px;
+  color: #263246;
+  background: #fff;
+  border: 1px solid #dce2ea;
+  border-radius: 6px;
+  outline: none;
+  font-size: 12px;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.search-form input:focus, .search-form select:focus,
+.stack-form input:focus, .flight-editor input:focus, .flight-editor select:focus {
+  border-color: #7ca8e6;
+  box-shadow: 0 0 0 3px rgba(43, 112, 206, .11);
+}
+.search-button { height: 38px; padding: 0 19px; }
+.content-section { padding: 39px 86px 0; }
+.content-section h2 {
+  margin: 0 0 18px;
+  color: var(--navy);
+  font-size: 21px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+.section-heading { display: flex; align-items: baseline; gap: 14px; }
+.table-card {
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #e8edf4;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+.data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 12px; }
+.data-table th {
+  color: #748196;
+  background: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+}
+.data-table th, .data-table td {
+  padding: 14px 13px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+.data-table tbody tr:last-child td { border-bottom: 0; }
+.data-table tbody tr { transition: background .15s ease; }
+.data-table tbody tr:hover { background: #f8faff; }
+.data-table td { color: #202b3d; }
+.data-table td strong { font-weight: 700; }
+.status {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.status-green { color: #168a50; background: #e0f5ea; }
+.status-yellow { color: #bd7900; background: #fff0d3; }
+.status-red { color: #cf333d; background: #ffe3e5; }
+.empty-state { padding: 28px; color: var(--muted); text-align: center; font-size: 13px; }
+.services-section { padding-top: 38px; padding-bottom: 38px; }
+.service-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.service-card {
+  min-height: 174px;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #e8edf4;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  transition: transform .16s ease, box-shadow .16s ease;
+}
+.service-card:hover { transform: translateY(-3px); box-shadow: 0 9px 20px rgba(20,47,86,.1); }
+.service-icon {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  color: var(--blue);
+  background: var(--blue-light);
+  border-radius: 9px;
+  font-size: 20px;
+  font-weight: 700;
+}
+.service-card h3 { margin: 13px 0 7px; color: var(--navy); font-size: 14px; line-height: 1.25; }
+.service-card p { margin: 0; color: #7c8798; font-size: 11px; line-height: 1.55; }
+.site-footer {
+  display: flex;
+  max-width: 1120px;
+  min-height: 66px;
+  margin: 0 auto;
+  padding: 0 86px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  color: #bdcbe0;
+  background: var(--navy);
+  font-size: 10px;
+}
+
+/* =========================================================
+   2–3. РЕГИСТРАЦИЯ И АВТОРИЗАЦИЯ
+   ========================================================= */
+.auth-page {
+  display: flex;
+  min-height: 100vh;
+  padding: 42px 18px;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(118deg, #102f63 0%, #143e7c 52%, #1d59a4 100%);
+}
+.auth-wrap { display: flex; width: 100%; flex-direction: column; align-items: center; }
+.auth-card {
+  width: min(100%, 410px);
+  padding: 34px 34px 31px;
+  background: #fff;
+  border: 1px solid rgba(255,255,255,.8);
+  border-radius: 14px;
+  box-shadow: 0 18px 42px rgba(4, 22, 52, .28);
+}
+.register-card { width: min(100%, 410px); }
+.login-card { width: min(100%, 340px); padding: 34px 30px 30px; }
+.auth-brand { margin-bottom: 22px; }
+.auth-brand .brand-mark { font-size: 31px; }
+.auth-card h1 { margin: 0 0 7px; color: var(--navy); font-size: 23px; line-height: 1.2; }
+.auth-subtitle { margin: 0 0 24px; color: #7a8596; font-size: 13px; line-height: 1.45; }
+.stack-form { display: flex; flex-direction: column; gap: 15px; }
+.stack-form > label:not(.check-line) { gap: 7px; font-size: 12px; }
+.stack-form input:not([type=checkbox]) { height: 43px; font-size: 13px; }
+.check-line { display: flex; align-items: center; gap: 8px; color: #303a49; font-size: 11px; font-weight: 400; }
+.check-line input { width: 14px; height: 14px; margin: 0; accent-color: var(--blue); }
+.auth-bottom { margin: 18px 0 0; color: #7b8696; text-align: center; font-size: 11px; }
+.auth-bottom a { color: var(--blue); font-weight: 600; }
+.admin-hint { margin: 13px 0 0; color: #7b8696; text-align: center; font-size: 10px; }
+.form-message { min-height: 0; margin: -3px 0 0; color: var(--red); font-size: 11px; line-height: 1.4; }
+.form-message:empty { display: none; }
+.back-link { margin-top: 16px; color: #fff; font-size: 12px; opacity: .94; }
+.back-link:hover { text-decoration: underline; }
+
+/* =========================================================
+   4. ПАНЕЛЬ АДМИНИСТРАТОРА
+   ========================================================= */
+.admin-page { min-height: 100vh; background: var(--page); }
+.admin-layout { display: grid; min-height: 100vh; grid-template-columns: 220px minmax(0, 1fr); }
+.sidebar { color: #d5e0f1; background: var(--navy-deep); }
+.sidebar-brand {
+  display: flex;
+  min-height: 78px;
+  padding: 18px 22px;
+  align-items: center;
+  gap: 11px;
+  color: #fff;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+}
+.sidebar-plane { font-size: 27px; line-height: 1; }
+.sidebar-brand strong { font-size: 14px; }
+.sidebar-brand small { color: #aabbd3; font-size: 10px; }
+.sidebar-nav { display: flex; flex-direction: column; padding-top: 9px; }
+.side-link {
+  display: block;
+  width: 100%;
+  min-height: 42px;
+  padding: 12px 20px;
+  color: #d1dcec;
+  background: transparent;
+  border: 0;
+  border-left: 3px solid transparent;
+  text-align: left;
+  font-size: 12px;
+  transition: background .15s ease, color .15s ease;
+}
+button.side-link:hover, .side-link.active { color: #fff; background: #294777; }
+.side-link.active { border-left-color: var(--red); }
+.side-site-link { margin-top: 3px; }
+.admin-main { min-width: 0; padding: 0 24px 28px; }
+.admin-header {
+  display: flex;
+  min-height: 78px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+.admin-header h1 { margin: 0; color: var(--navy); font-size: 22px; line-height: 1.2; }
+.admin-user { display: flex; align-items: center; gap: 10px; }
+.admin-user strong { display: block; color: #253149; font-size: 11px; }
+.admin-user small { display: block; margin-top: 4px; color: #7b8799; font-size: 10px; }
+.avatar { display: grid; width: 34px; height: 34px; place-items: center; color: #fff; background: var(--blue); border-radius: 50%; font-size: 12px; }
+.stats-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px; }
+.stat-card {
+  display: flex;
+  min-height: 108px;
+  padding: 17px;
+  flex-direction: column;
+  justify-content: center;
+  gap: 7px;
+  background: #fff;
+  border: 1px solid #e8edf4;
+  border-radius: 11px;
+  box-shadow: var(--shadow);
+}
+.stat-card strong { color: var(--navy); font-size: 24px; line-height: 1; }
+.stat-card span { color: #7a879b; font-size: 11px; line-height: 1.4; }
+.admin-card {
+  margin-bottom: 17px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #e8edf4;
+  border-radius: 11px;
+  box-shadow: var(--shadow);
+}
+.admin-card-heading { padding: 16px 18px; border-bottom: 1px solid var(--line); }
+.admin-card-heading h2 { margin: 0; color: var(--navy); font-size: 15px; line-height: 1.2; }
+.flight-editor {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1.1fr auto;
+  align-items: end;
+  gap: 10px;
+  padding: 15px 18px 13px;
+  background: #f8f9fc;
+  border-bottom: 1px solid var(--line);
+}
+.flight-editor label { gap: 7px; font-size: 10px; }
+.flight-editor input, .flight-editor select { height: 37px; padding: 0 10px; font-size: 11px; }
+.add-flight-button { min-height: 37px; padding: 0 14px; font-size: 11px; }
+.table-scroll { overflow-x: auto; }
+.admin-table th, .admin-table td { padding: 13px 11px; font-size: 11px; }
+.admin-table th { color: #748196; font-size: 9px; }
+.actions-cell { display: flex; align-items: center; gap: 5px; }
+.bookings-card { margin-top: 17px; }
+.bookings-table th, .bookings-table td { padding-top: 14px; padding-bottom: 14px; }
+.extra-heading { margin: 0 0 12px; color: var(--navy); font-size: 16px; }
+.extra-copy { color: #748196; font-size: 13px; line-height: 1.65; }
+
+/* Адаптация для ноутбуков и планшетов */
+@media (max-width: 1050px) {
+  .topbar { padding: 0 30px; }
+  .hero { padding-right: 48px; padding-left: 48px; }
+  .content-section { padding-right: 48px; padding-left: 48px; }
+  .site-footer { padding-right: 48px; padding-left: 48px; }
+  .flight-editor { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .add-flight-button { min-height: 37px; }
+}
+@media (max-width: 760px) {
+  .topbar { height: auto; min-height: 68px; padding: 13px 18px; flex-wrap: wrap; gap: 12px; }
+  .main-nav { order: 3; width: 100%; justify-content: space-between; gap: 10px; margin: 2px 0 0; }
+  .main-nav a { font-size: 11px; }
+  .top-actions { margin-left: auto; }
+  .hero { min-height: 0; padding: 40px 24px 42px; }
+  .hero-copy h1 { font-size: 29px; }
+  .search-form { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .search-button { width: 100%; }
+  .content-section { padding: 30px 24px 0; }
+  .content-section h2 { font-size: 19px; }
+  .table-card { overflow-x: auto; }
+  .home-flight-table { min-width: 760px; }
+  .services-section { padding-top: 30px; padding-bottom: 30px; }
+  .service-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .site-footer { min-height: 0; padding: 18px 24px; flex-direction: column; align-items: flex-start; }
+  .admin-layout { grid-template-columns: 1fr; }
+  .sidebar { min-height: auto; }
+  .sidebar-brand { min-height: 58px; padding: 12px 18px; }
+  .sidebar-nav { flex-direction: row; flex-wrap: wrap; padding: 6px; }
+  .side-link { width: auto; min-height: 34px; padding: 9px 11px; border-left: 0; border-bottom: 2px solid transparent; }
+  .side-link.active { border-left: 0; border-bottom-color: var(--red); }
+  .admin-main { padding: 0 14px 20px; }
+  .admin-header { min-height: 66px; }
+  .admin-header h1 { font-size: 18px; }
+  .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+  .stat-card { min-height: 86px; }
+  .stat-card strong { font-size: 21px; }
+  .flight-editor { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .flight-editor .add-flight-button { grid-column: span 2; }
+}
+@media (max-width: 480px) {
+  .brand strong { font-size: 13px; }
+  .brand small { font-size: 9px; }
+  .brand-mark { font-size: 25px; }
+  .top-actions { gap: 5px; }
+  .button-small { min-height: 32px; padding: 0 10px; font-size: 10px; }
+  .hero { padding: 34px 17px; }
+  .hero-copy h1 { font-size: 26px; }
+  .hero-copy p { font-size: 11px; }
+  .search-form { grid-template-columns: 1fr; padding: 13px; }
+  .search-form label, .search-button { grid-column: 1; }
+  .content-section { padding-right: 16px; padding-left: 16px; }
+  .service-grid { grid-template-columns: 1fr; }
+  .service-card { min-height: 0; }
+  .site-footer { padding: 17px 16px; font-size: 9px; }
+  .auth-page { padding: 25px 14px; }
+  .auth-card, .login-card { padding: 27px 22px 25px; }
+  .auth-card h1 { font-size: 21px; }
+  .admin-user small { font-size: 9px; }
+  .admin-header h1 { font-size: 16px; }
+  .flight-editor { grid-template-columns: 1fr; }
+  .flight-editor .add-flight-button { grid-column: auto; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+}
+
+  </style>
+</head>
+<body class="home-page">
+  <header class="topbar">
+    <a class="brand" href="index.html" aria-label="Аэрофлот — главная">
+      <span class="brand-mark">✈</span>
+      <span><strong>Аэрофлот</strong><small>Информационная система</small></span>
+    </a>
+    <nav class="main-nav" aria-label="Главное меню">
+      <a class="active" href="index.html">Главная</a>
+      <a href="#flights">Расписание</a>
+      <a href="#services">Услуги</a>
+      <a href="#contacts">Контакты</a>
+    </nav>
+    <div class="top-actions">
+      <a class="button button-outline button-small" href="login.html">Войти</a>
+      <a class="button button-red button-small" href="register.html">Регистрация</a>
+    </div>
+  </header>
+
+  <main class="home-content">
+    <section class="hero">
+      <div class="hero-copy">
+        <h1>Летайте с комфортом<br>по России и миру</h1>
+        <p>Поиск рейсов, бронирование и онлайн-регистрация в одном месте</p>
+      </div>
+      <form class="search-form" id="flight-search">
+        <label>Откуда
+          <input id="from-city" type="text" value="Москва" placeholder="Город вылета">
+        </label>
+        <label>Куда
+          <input id="to-city" type="text" value="Санкт-Петербург" placeholder="Город назначения">
+        </label>
+        <label>Дата вылета
+          <input id="flight-date" type="date" value="2026-11-20">
+        </label>
+        <label>Пассажиры
+          <select id="passengers"><option>1 взрослый</option><option>2 взрослых</option><option>3 взрослых</option><option>4 взрослых</option></select>
+        </label>
+        <button class="button button-red search-button" type="submit">Найти рейсы</button>
+      </form>
+    </section>
+
+    <section class="content-section" id="flights">
+      <div class="section-heading"><h2>Ближайшие рейсы</h2><span id="search-message" class="muted"></span></div>
+      <div class="table-card">
+        <table class="data-table home-flight-table">
+          <thead><tr><th>Рейс</th><th>Откуда</th><th>Куда</th><th>Вылет</th><th>Прилёт</th><th>Статус</th><th>Цена</th><th></th></tr></thead>
+          <tbody id="home-flight-rows">
+            <tr data-from="Москва" data-to="Санкт-Петербург"><td><strong>SU 1404</strong></td><td>Москва (SVO)</td><td>Санкт-Петербург (LED)</td><td>07:30</td><td>09:00</td><td><span class="status status-green">По расписанию</span></td><td>4 890 ₽</td><td><button class="button button-blue button-xs buy-button">Купить</button></td></tr>
+            <tr data-from="Москва" data-to="Санкт-Петербург"><td><strong>SU 1412</strong></td><td>Москва (SVO)</td><td>Санкт-Петербург (LED)</td><td>12:15</td><td>13:45</td><td><span class="status status-green">По расписанию</span></td><td>5 290 ₽</td><td><button class="button button-blue button-xs buy-button">Купить</button></td></tr>
+            <tr data-from="Москва" data-to="Сочи"><td><strong>SU 1136</strong></td><td>Москва (SVO)</td><td>Сочи (AER)</td><td>09:40</td><td>12:30</td><td><span class="status status-yellow">Задержка 20 мин</span></td><td>7 450 ₽</td><td><button class="button button-blue button-xs buy-button">Купить</button></td></tr>
+            <tr data-from="Москва" data-to="Казань"><td><strong>SU 1620</strong></td><td>Москва (SVO)</td><td>Казань (KZN)</td><td>16:05</td><td>17:35</td><td><span class="status status-green">По расписанию</span></td><td>3 990 ₽</td><td><button class="button button-blue button-xs buy-button">Купить</button></td></tr>
+            <tr data-from="Москва" data-to="Пенза"><td><strong>SU 1850</strong></td><td>Москва (SVO)</td><td>Пенза (PEZ)</td><td>18:50</td><td>20:20</td><td><span class="status status-green">Идёт посадка</span></td><td>4 150 ₽</td><td><button class="button button-blue button-xs buy-button">Купить</button></td></tr>
+          </tbody>
+        </table>
+        <div id="no-flights" class="empty-state hidden">По заданному направлению рейсы не найдены. Измените параметры поиска.</div>
+      </div>
+    </section>
+
+    <section class="content-section services-section" id="services">
+      <h2>Наши услуги</h2>
+      <div class="service-grid">
+        <article class="service-card"><span class="service-icon">▤</span><h3>Бронирование</h3><p>Выбор рейса, места и тарифа, онлайн-оплата и электронный билет.</p></article>
+        <article class="service-card"><span class="service-icon">✓</span><h3>Онлайн-регистрация</h3><p>Регистрация на рейс за 24 часа до вылета и посадочный талон.</p></article>
+        <article class="service-card"><span class="service-icon">▱</span><h3>Багаж</h3><p>Проверка провоза, расчёт стоимости и отслеживание багажа.</p></article>
+        <article class="service-card"><span class="service-icon">☆</span><h3>Программа лояльности</h3><p>Копите мили за полёты и обменивайте их на билеты.</p></article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" id="contacts">
+    <span>© 2026 Аэрофлот — учебный проект (информационная система)</span>
+    <span>Горячая линия: 8 (800) 555-35-35 · info@aeroflot.ru</span>
+  </footer>
+  <script>
+// Учебная демонстрация: данные хранятся в браузере (localStorage), сервер не требуется.
+const ADMIN_EMAIL = 'admin@aeroflot.ru';
+const ADMIN_PASSWORD = 'admin123';
+
+function readUsers() {
+  try { return JSON.parse(localStorage.getItem('aeroflot_users') || '[]'); }
+  catch { return []; }
+}
+function saveUsers(users) { localStorage.setItem('aeroflot_users', JSON.stringify(users)); }
+
+// Регистрация пассажира
+const registerForm = document.getElementById('register-form');
+if (registerForm) {
+  registerForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const form = new FormData(registerForm);
+    const fullname = String(form.get('fullname') || '').trim();
+    const email = String(form.get('email') || '').trim().toLowerCase();
+    const phone = String(form.get('phone') || '').trim();
+    const password = String(form.get('password') || '');
+    const repeat = String(form.get('passwordRepeat') || '');
+    const error = document.getElementById('register-error');
+    error.textContent = '';
+
+    if (password.length < 6) { error.textContent = 'Пароль должен содержать не менее 6 символов.'; return; }
+    if (password !== repeat) { error.textContent = 'Пароли не совпадают.'; return; }
+    const users = readUsers();
+    if (users.some(user => user.email === email)) { error.textContent = 'Пользователь с таким Email уже зарегистрирован.'; return; }
+
+    users.push({ fullname, email, phone, password });
+    saveUsers(users);
+    alert('Регистрация прошла успешно. Теперь войдите в личный кабинет.');
+    window.location.href = 'login.html';
+  });
+}
+
+// Авторизация администратора или зарегистрированного пассажира
+const loginForm = document.getElementById('login-form');
+if (loginForm) {
+  loginForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const form = new FormData(loginForm);
+    const email = String(form.get('email') || '').trim().toLowerCase();
+    const password = String(form.get('password') || '');
+    const error = document.getElementById('login-error');
+    error.textContent = '';
+
+    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+      localStorage.setItem('aeroflot_session', JSON.stringify({ role: 'admin', email }));
+      window.location.href = 'admin.html';
+      return;
+    }
+    const user = readUsers().find(item => item.email === email && item.password === password);
+    if (user) {
+      localStorage.setItem('aeroflot_session', JSON.stringify({ role: 'passenger', email, fullname: user.fullname }));
+      alert(`Добро пожаловать, ${user.fullname}!`);
+      window.location.href = 'index.html';
+    } else {
+      error.textContent = 'Неверный Email или пароль. Проверьте данные и попробуйте снова.';
+    }
+  });
+}
+
+// Поиск рейсов на главной странице
+const searchForm = document.getElementById('flight-search');
+if (searchForm) {
+  searchForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const from = document.getElementById('from-city').value.trim().toLocaleLowerCase('ru');
+    const to = document.getElementById('to-city').value.trim().toLocaleLowerCase('ru');
+    const rows = [...document.querySelectorAll('#home-flight-rows tr')];
+    let visible = 0;
+    rows.forEach(row => {
+      const rowFrom = row.dataset.from.toLocaleLowerCase('ru');
+      const rowTo = row.dataset.to.toLocaleLowerCase('ru');
+      const matches = (!from || rowFrom.includes(from)) && (!to || rowTo.includes(to));
+      row.classList.toggle('hidden', !matches);
+      if (matches) visible++;
+    });
+    document.getElementById('no-flights').classList.toggle('hidden', visible !== 0);
+    document.getElementById('search-message').textContent = `Найдено рейсов: ${visible}`;
+    document.getElementById('flights').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+}
+
+document.querySelectorAll('.buy-button').forEach(button => {
+  button.addEventListener('click', () => {
+    const session = localStorage.getItem('aeroflot_session');
+    if (!session) {
+      alert('Для покупки билета войдите или зарегистрируйтесь.');
+      window.location.href = 'login.html';
+    } else {
+      alert('Это демонстрационный проект. Для оформления бронирования обратитесь к кассиру.');
+    }
+  });
+});
+
+// Панель администратора: редактирование демонстрационного списка рейсов
+const flightRows = document.getElementById('admin-flight-rows');
+if (flightRows) {
+  flightRows.addEventListener('click', (event) => {
+    const button = event.target.closest('button');
+    if (!button) return;
+    const row = button.closest('tr');
+    if (button.classList.contains('delete-flight')) {
+      if (confirm(`Удалить рейс ${row.cells[0].textContent.trim()}?`)) row.remove();
+    }
+    if (button.classList.contains('edit-flight')) {
+      const oldNumber = row.cells[0].textContent.trim();
+      const newNumber = prompt('Номер рейса:', oldNumber);
+      if (newNumber === null || !newNumber.trim()) return;
+      row.cells[0].innerHTML = `<strong>${escapeHtml(newNumber.trim())}</strong>`;
+      const oldRoute = row.cells[1].textContent.trim();
+      const newRoute = prompt('Маршрут:', oldRoute);
+      if (newRoute !== null && newRoute.trim()) row.cells[1].textContent = newRoute.trim();
+      const oldTime = row.cells[2].textContent.trim();
+      const newTime = prompt('Время вылета:', oldTime);
+      if (newTime !== null && newTime.trim()) row.cells[2].textContent = newTime.trim();
+    }
+  });
+
+  const addForm = document.getElementById('add-flight-form');
+  addForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const data = new FormData(addForm);
+    const number = String(data.get('number')).trim();
+    const from = String(data.get('from')).trim();
+    const to = String(data.get('to')).trim();
+    const time = String(data.get('time')).trim();
+    const plane = String(data.get('plane')).trim();
+    if (!number || !from || !to || !time) return;
+    const row = document.createElement('tr');
+    row.innerHTML = `<td><strong>${escapeHtml(number)}</strong></td><td>${escapeHtml(from)} → ${escapeHtml(to)}</td><td>${escapeHtml(time)}</td><td>${escapeHtml(plane)}</td><td>0 / 158</td><td><span class="status status-green">По расписанию</span></td><td class="actions-cell"><button class="button button-outline button-xs edit-flight">Изменить</button><button class="button button-red button-xs delete-flight">Удалить</button></td>`;
+    flightRows.appendChild(row);
+    addForm.reset();
+  });
+
+  // Переключение разделов бокового меню. Основной рабочий раздел — «Рейсы».
+  const sectionNames = {
+    flights: 'Панель администратора', planes: 'Самолёты', passengers: 'Пассажиры',
+    bookings: 'Бронирования', employees: 'Сотрудники', reports: 'Отчёты'
+  };
+  const extraContent = {
+    planes: ['Самолёты авиакомпании', 'Airbus A320 — 12 единиц; Airbus A321 — 8 единиц; Sukhoi Superjet 100 — 10 единиц.'],
+    passengers: ['Зарегистрированные пассажиры', 'В системе отображаются пассажиры, создавшие личный кабинет и оформившие бронирование.'],
+    bookings: ['Бронирования', 'Здесь можно просматривать коды бронирования, пассажиров, выбранные рейсы и статусы оплаты.'],
+    employees: ['Сотрудники', 'Кассиры, агенты регистрации, диспетчеры, менеджеры и технические специалисты.'],
+    reports: ['Отчёты', 'Сводные показатели: количество рейсов, проданных билетов, зарегистрированных пассажиров и выручка.']
+  };
+  document.querySelectorAll('.side-link[data-section]').forEach(link => {
+    link.addEventListener('click', () => {
+      const section = link.dataset.section;
+      document.querySelectorAll('.side-link[data-section]').forEach(item => item.classList.toggle('active', item === link));
+      document.getElementById('admin-title').textContent = sectionNames[section];
+      const isFlights = section === 'flights';
+      document.getElementById('admin-stats').classList.toggle('hidden', !isFlights);
+      document.getElementById('flight-management').classList.toggle('hidden', !isFlights);
+      document.getElementById('recent-bookings').classList.toggle('hidden', !isFlights);
+      const extra = document.getElementById('admin-extra');
+      if (isFlights) {
+        extra.classList.add('hidden');
+      } else {
+        extra.classList.remove('hidden');
+        const [heading, copy] = extraContent[section];
+        extra.innerHTML = `<div class="admin-card-heading"><h2>${heading}</h2></div><div style="padding:18px"><h3 class="extra-heading">${heading}</h3><p class="extra-copy">${copy}</p></div>`;
+      }
+    });
+  });
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[char]);
+}
+
+  </script>
+</body>
+</html>
